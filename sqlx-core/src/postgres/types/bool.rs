@@ -31,7 +31,10 @@ impl Decode<'_, Postgres> for bool {
         Ok(match value.format() {
             PgValueFormat::Binary => {
                 let b = value.as_bytes()?.first().ok_or_else(|| {
-                    BoxDynError::from("unexpected missing value for boolean".to_string())
+                    BoxDynError::from(format!(
+                        "unexpected missing value for boolean on field type {:?}",
+                        value.type_info
+                    ))
                 })?;
 
                 *b != 0
